@@ -82,8 +82,8 @@ my %interactions = %{batchReadInteractions(\@allinterFiles)};
 print STDERR "Printing...\n";
 
 my @header = ();
-push(@header,"ENSP");
-push(@header, "ENSP_PARTNER");
+push(@header,"PROTEIN");
+push(@header, "PARTNER");
 push(@header, "AA");
 push(@header, "POS");
 push(@header, "ACCDIFFPERCENT");

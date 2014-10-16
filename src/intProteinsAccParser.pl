@@ -63,7 +63,7 @@ my %proteins = %{batchReadProteins(\@allprotFiles)};
 print STDERR "Printing...\n";
 
 my @header = ();
-push(@header,"ENSP");
+push(@header,"PROTEIN");
 push(@header, "AA");
 push(@header, "POS");
 push(@header, "ACCPERCENT");
