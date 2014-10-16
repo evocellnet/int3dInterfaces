@@ -43,18 +43,21 @@ So far, the pipeline has not been adapted to run different organisms. By default
 The list of current organisms includes:
 
 * Arabidopsis thaliana (athaliana)
-* Bacillus subtilis (bsubtilis)
 * Canorhabditis elegans (celegans)
-* Campylobacter jejuni (cjejuni)
 * Drosophila melanogaster (fly)
 * Escherichia coli (ecoli)
 * Helicobacter pylori (hpylori)
 * Homo sapiens (human)
 * Mus musculus (mouse)
 * Mycobacterium tuberculosis (mtuberculosis)
+* Saccharomyces cerevisiae (yeast)
+
+Upcoming:
+
+* Bacillus subtilis (bsubtilis)
+* Campylobacter jejuni (cjejuni)
 * Mycoplasma pneumoniae (mpneumoniae)
-* Plasmodium falciparum (pfalciparum)
 * Rattus norvegicus (rat)
-* Saccharomyces cerecisiae (yeast)
+* Plasmodium falciparum (pfalciparum)
 * Schizosaccharomyces pombe (spombe)
 * Treponema pallidum (tpallidum)
