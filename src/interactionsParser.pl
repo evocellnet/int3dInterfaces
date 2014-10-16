@@ -353,7 +353,7 @@ sub printAll{
 					push(@toprint, $p1);
 					push(@toprint, $p2);
 					push(@toprint, ${${$p1protein{$chain}}{"aminoacids"}}{$intRes});
-					push(@toprint, ${${$p1protein{$chain}}{"positions"}}{$intRes});
+					push(@toprint, $intRes);
 					push(@toprint, sprintf("%.2f", $interface{$intRes}));
 					push(@toprint, $fields[$hcol{"TYPE"}]);
 					push(@toprint, $fields[$hcol{"PDB_ID"}]);

@@ -7,6 +7,7 @@ TEMPDIR = $(CURDIR)/temp
 SRCDIR = $(CURDIR)/src
 DATADIR = $(CURDIR)/data
 ORGANISMS = $(CURDIR)/organisms.txt
+RESULTSDIR = $(CURDIR)/results
 
 #Tools
 NACCESS ?= $(shell which naccess)
@@ -46,8 +47,8 @@ INTERACTOME3DPROTSLOGDIR ?= $(INTERACTOME3DPROTSDIR)/logs
 INTERACTOME3DPROTSASADIR ?= $(INTERACTOME3DPROTSDIR)/asas
 
 #Output
-INTERFACESFILE ?= $(TEMPDIR)/interfaces.tab
-INTERACTPROTACC ?= $(TEMPDIR)/inter3d_protein_accessibilities.tab
+INTERFACESFILE ?= $(RESULTSDIR)/interfaces.tab
+INTERACTPROTACC ?= $(RESULTSDIR)/accessibilities.tab
 
 #Interactome3d
 INTERACTOME3DINTSTARFILES = $(foreach FILE,$(shell grep interactions $(FILELIST) | grep tgz),$(INTERACTOME3DINTSTARDIR)/$(basename $(FILE)).tgz)
@@ -76,6 +77,7 @@ test:
 	
 int3Ddirectories:
 	mkdir -p $(DATADIR)
+	mkdir -p $(RESULTSDIR)
 	mkdir -p $(INTERACTOME3DPROTSDIR)
 	mkdir -p $(INTERACTOME3DPROTSPDBDIR)
 	mkdir -p $(INTERACTOME3DPROTSRSADIR)
@@ -114,9 +116,9 @@ $(INTERACTOME3DINTSTARDIR)/%.tgz:
 $(INTERACTOME3DINTSRSADIR)/%.rsa: $(INTERACTOME3DINTSPDBDIR)/%.pdb
 	-$(NACCESS) $(INTERACTOME3DINTSPDBDIR)/$*.pdb
 	if test -f $(call NACCESSCUT,$*).rsa; then \
-		mv $(call NACCESSCUT,$*).rsa $(INTERACTOME3DINTSRSADIR)/$*.rsa ;\
-		mv $(call NACCESSCUT,$*).log $(INTERACTOME3DINTSLOGDIR)/$*.rsa ;\
-		mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DINTSASADIR)/$*.rsa ;\
+		-mv $(call NACCESSCUT,$*).rsa $(INTERACTOME3DINTSRSADIR)/$*.rsa ;\
+		-mv $(call NACCESSCUT,$*).log $(INTERACTOME3DINTSLOGDIR)/$*.rsa ;\
+		-mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DINTSASADIR)/$*.rsa ;\
 	fi
 	
 #Individual proteins extracted from interactome3d complexes
@@ -127,9 +129,9 @@ $(INTERACTOME3DPROTSPDBDIR)/%.pdb:
 $(INTERACTOME3DPROTSRSADIR)/%.rsa: $(INTERACTOME3DPROTSPDBDIR)/%.pdb
 	-$(NACCESS) $(INTERACTOME3DPROTSPDBDIR)/$*.pdb
 	if test -f $(call NACCESSCUT,$*).rsa; then \
-		mv $(call NACCESSCUT,$*).rsa $(INTERACTOME3DPROTSRSADIR)/$*.rsa ;\
-		mv $(call NACCESSCUT,$*).log $(INTERACTOME3DPROTSLOGDIR)/$*.rsa ;\
-		mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DPROTSASADIR)/$*.rsa ;\
+		-mv $(call NACCESSCUT,$*).rsa $(INTERACTOME3DPROTSRSADIR)/$*.rsa ;\
+		-mv $(call NACCESSCUT,$*).log $(INTERACTOME3DPROTSLOGDIR)/$*.rsa ;\
+		-mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DPROTSASADIR)/$*.rsa ;\
 	fi
 	
 $(INTERFACESFILE): int3Drsas

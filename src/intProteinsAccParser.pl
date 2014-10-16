@@ -32,7 +32,6 @@ for(my $i=1;$i<scalar(@intlines);$i++){
 		$p1File=$1."_A.rsa";
 		$p2File=$1."_B.rsa";
 	}
-  print $p1File."\n";
   
 	if(-e $p1File){
 		#files that exist and are not empty
@@ -323,7 +322,7 @@ sub printAll{
 				my @toprint;
 				push(@toprint, $p1);
 				push(@toprint, ${${$p1protein{$chain}}{"aminoacids"}}{$intRes});
-				push(@toprint, ${${$p1protein{$chain}}{"positions"}}{$intRes});
+				push(@toprint, $intRes);
 				push(@toprint, sprintf("%.2f", $accessibilities{$intRes}));
 				push(@toprint, $fields[$hcol{"TYPE"}]);
 				push(@toprint, $fields[$hcol{"PDB_ID"}]);
