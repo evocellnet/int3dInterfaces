@@ -7,7 +7,7 @@ Pipeline to extract protein interfaces for all the available Interactome3d struc
 
 1. Downloads all the necessary files for a given organism
 2. Splits the interacting partners into individual pdbs
-3. Runs NACCESS to calculate the accessbilities to the individual proteins as well as for the protein complexes.
+3. Runs NACCESS to calculate the accessbilities for the individual proteins as well as for the protein complexes.
 4. Calculates the difference on relative accessibility from complexes and monomers to detect residues changing their accessibiliy.
 
 ### Output files
