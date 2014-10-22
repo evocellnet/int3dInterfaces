@@ -20,6 +20,7 @@ for(my $j=0;$j<scalar(@headerFields);$j++){
 #Pre-reading all interactions and proteins
 my @allprotFiles;
 my %visitedProtFile;
+my %chainDict;
 for(my $i=1;$i<scalar(@intlines);$i++){
 	my $line = $intlines[$i];
 	chomp($line);
@@ -32,7 +33,8 @@ for(my $i=1;$i<scalar(@intlines);$i++){
 		$p1File=$1."_A.rsa";
 		$p2File=$1."_B.rsa";
 	}
-  
+  ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT1"}]}=$fields[$hcol{"CHAIN1"}];
+  ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT2"}]}=$fields[$hcol{"CHAIN2"}];
 	if(-e $p1File){
 		#files that exist and are not empty
 		if(-f $p1File && -s $p1File){
@@ -326,7 +328,7 @@ sub printAll{
 				push(@toprint, sprintf("%.2f", $accessibilities{$intRes}));
 				push(@toprint, $fields[$hcol{"TYPE"}]);
 				push(@toprint, $fields[$hcol{"PDB_ID"}]);
-				push(@toprint, $fields[$hcol{"CHAIN1"}]);
+				push(@toprint, ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$p1});
 				push(@toprint, $intRes);
 				push(@toprint, $fields[$hcol{"FILENAME"}]);
 

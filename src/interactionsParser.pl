@@ -17,6 +17,7 @@ for(my $j=0;$j<scalar(@headerFields);$j++){
 	$hcol{$headerFields[$j]}=$j;
 }
 
+my %chainDict;
 #Pre-reading all interactions and proteins
 my @allinterFiles;
 my @allprotFiles;
@@ -43,6 +44,8 @@ for(my $i=1;$i<scalar(@intlines);$i++){
 		if(-f $intFile && -s $intFile){	
 			if(! defined($visitedInterFile{$intFile})){
 				push(@allinterFiles, $intFile);
+        ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT1"}]}=$fields[$hcol{"CHAIN1"}];
+        ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT2"}]}=$fields[$hcol{"CHAIN2"}];
 				$visitedInterFile{$intFile}=1;
 			}
 		}
@@ -357,9 +360,9 @@ sub printAll{
 					push(@toprint, sprintf("%.2f", $interface{$intRes}));
 					push(@toprint, $fields[$hcol{"TYPE"}]);
 					push(@toprint, $fields[$hcol{"PDB_ID"}]);
-					push(@toprint, $fields[$hcol{"CHAIN1"}]);
+					push(@toprint, ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$p1});
 					push(@toprint, $intRes);
-					push(@toprint, $fields[$hcol{"CHAIN2"}]);
+					push(@toprint, ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$p2});
 					push(@toprint, $fields[$hcol{"FILENAME"}]);
 		
 					#Printing
