@@ -33,8 +33,8 @@ for(my $i=1;$i<scalar(@intlines);$i++){
 		$p1File=$1."_A.rsa";
 		$p2File=$1."_B.rsa";
 	}
-  ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT1"}]}=$fields[$hcol{"CHAIN1"}];
-  ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT2"}]}=$fields[$hcol{"CHAIN2"}];
+  ${${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT1"}]}}{"A"}=$fields[$hcol{"CHAIN1"}];
+  ${${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT2"}]}}{"B"}=$fields[$hcol{"CHAIN2"}];
 	if(-e $p1File){
 		#files that exist and are not empty
 		if(-f $p1File && -s $p1File){
@@ -318,6 +318,7 @@ sub printAll{
 		#Chain
 		my @chains = keys(%p1protein);
 		my $chain = $chains[0];
+    
 		#In case all the protein fragments match with the ensembl protein and not multiple matches present
 		foreach my $intRes (keys %accessibilities){
 			if(defined($accessibilities{$intRes})){
@@ -328,7 +329,7 @@ sub printAll{
 				push(@toprint, sprintf("%.2f", $accessibilities{$intRes}));
 				push(@toprint, $fields[$hcol{"TYPE"}]);
 				push(@toprint, $fields[$hcol{"PDB_ID"}]);
-				push(@toprint, ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$p1});
+				push(@toprint, ${${$chainDict{$fields[$hcol{"FILENAME"}]}}{$p1}}{$chain});
 				push(@toprint, $intRes);
 				push(@toprint, $fields[$hcol{"FILENAME"}]);
 

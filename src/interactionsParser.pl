@@ -39,13 +39,13 @@ for(my $i=1;$i<scalar(@intlines);$i++){
 		$p1File=$1."_A.rsa";
 		$p2File=$1."_B.rsa";
 	}
+  ${${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT1"}]}}{"A"}=$fields[$hcol{"CHAIN1"}];        
+  ${${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT2"}]}}{"B"}=$fields[$hcol{"CHAIN2"}];
 	if(-e $intFile){
 		#files that exist and are not empty
 		if(-f $intFile && -s $intFile){	
 			if(! defined($visitedInterFile{$intFile})){
 				push(@allinterFiles, $intFile);
-        ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT1"}]}=$fields[$hcol{"CHAIN1"}];
-        ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$fields[$hcol{"PROT2"}]}=$fields[$hcol{"CHAIN2"}];
 				$visitedInterFile{$intFile}=1;
 			}
 		}
@@ -338,16 +338,18 @@ sub printAll{
 		#files that exist and are not empty
 		if(-f $intFile && -s $intFile){
 			my %complex = %{$interactions{$intFile}};
-			my %p1protein = %{$proteins{$p1File}}; 
+			my %p1protein = %{$proteins{$p1File}};
+			my %p2protein = %{$proteins{$p2File}};  
 			#Protein interface on protein based on the given interface
 			my %interface = %{getInterface(\%p1protein,\%complex)};
 	
 			#Chain
-			my @chains = keys(%p1protein);
-			my $chain = $chains[0];
-						
+			my @chains1 = keys(%p1protein);
+			my $chain1 = $chains1[0];
+			my @chains2 = keys(%p2protein);
+			my $chain2 = $chains2[0];
+      
 			# print STDERR "seq\n";
-			my %p2protein = %{$proteins{$p2File}}; 
 
 			#For all the elements in the interface
 			foreach my $intRes (keys %interface){
@@ -355,14 +357,14 @@ sub printAll{
 					my @toprint;
 					push(@toprint, $p1);
 					push(@toprint, $p2);
-					push(@toprint, ${${$p1protein{$chain}}{"aminoacids"}}{$intRes});
+					push(@toprint, ${${$p1protein{$chain1}}{"aminoacids"}}{$intRes});
 					push(@toprint, $intRes);
 					push(@toprint, sprintf("%.2f", $interface{$intRes}));
 					push(@toprint, $fields[$hcol{"TYPE"}]);
 					push(@toprint, $fields[$hcol{"PDB_ID"}]);
-					push(@toprint, ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$p1});
+					push(@toprint, ${${$chainDict{$fields[$hcol{"FILENAME"}]}}{$p1}}{$chain1});
 					push(@toprint, $intRes);
-					push(@toprint, ${$chainDict{$fields[$hcol{"FILENAME"}]}}{$p2});
+					push(@toprint, ${${$chainDict{$fields[$hcol{"FILENAME"}]}}{$p2}}{$chain2});
 					push(@toprint, $fields[$hcol{"FILENAME"}]);
 		
 					#Printing
