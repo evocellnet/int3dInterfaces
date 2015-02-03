@@ -116,9 +116,9 @@ $(INTERACTOME3DINTSTARDIR)/%.tgz:
 $(INTERACTOME3DINTSRSADIR)/%.rsa: $(INTERACTOME3DINTSPDBDIR)/%.pdb
 	-$(NACCESS) $(INTERACTOME3DINTSPDBDIR)/$*.pdb
 	if test -f $(call NACCESSCUT,$*).rsa; then \
-		-mv $(call NACCESSCUT,$*).rsa $(INTERACTOME3DINTSRSADIR)/$*.rsa ;\
-		-mv $(call NACCESSCUT,$*).log $(INTERACTOME3DINTSLOGDIR)/$*.rsa ;\
-		-mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DINTSASADIR)/$*.rsa ;\
+		mv $(call NACCESSCUT,$*).rsa $(INTERACTOME3DINTSRSADIR)/$*.rsa ;\
+		mv $(call NACCESSCUT,$*).log $(INTERACTOME3DINTSLOGDIR)/$*.rsa ;\
+		mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DINTSASADIR)/$*.rsa ;\
 	fi
 	
 #Individual proteins extracted from interactome3d complexes
@@ -129,9 +129,9 @@ $(INTERACTOME3DPROTSPDBDIR)/%.pdb:
 $(INTERACTOME3DPROTSRSADIR)/%.rsa: $(INTERACTOME3DPROTSPDBDIR)/%.pdb
 	-$(NACCESS) $(INTERACTOME3DPROTSPDBDIR)/$*.pdb
 	if test -f $(call NACCESSCUT,$*).rsa; then \
-		-mv $(call NACCESSCUT,$*).rsa $(INTERACTOME3DPROTSRSADIR)/$*.rsa ;\
-		-mv $(call NACCESSCUT,$*).log $(INTERACTOME3DPROTSLOGDIR)/$*.rsa ;\
-		-mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DPROTSASADIR)/$*.rsa ;\
+		mv $(call NACCESSCUT,$*).rsa $(INTERACTOME3DPROTSRSADIR)/$*.rsa ;\
+		mv $(call NACCESSCUT,$*).log $(INTERACTOME3DPROTSLOGDIR)/$*.rsa ;\
+		mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DPROTSASADIR)/$*.rsa ;\
 	fi
 	
 $(INTERFACESFILE): int3Drsas
