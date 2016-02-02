@@ -38,7 +38,7 @@ If you want to run everything from scratch, clean the whole project running:
 
 ##Other organisms
 
-So far, the pipeline has not been adapted to run different organisms. By default, it runs yeast. You can select other organisms by updating the content of the variables `INT3URL` and `FILELISTPAGE` on the `Makefile`. It's as easy as substite `yeast` by the organism of interest. Remember to `make clean` before running a new organism.
+So far, the pipeline has not been adapted to run different organisms. By default, it runs yeast. You can select other organisms by adding `ORGANISM=ecoli` (if you fancy running it on E. coli) at the end of each `make` command that you invoke. Remember to `make clean` before running a new organism.
 
 The list of current organisms includes:
 
