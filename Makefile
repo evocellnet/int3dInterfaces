@@ -2,6 +2,9 @@
 # Interactome3d
 #################
 
+#Organism
+ORGANISM = yeast
+
 #Main directories
 TEMPDIR = $(CURDIR)/temp
 SRCDIR = $(CURDIR)/src
@@ -21,8 +24,8 @@ TAR ?= $(shell which tar)
 PERL ?= $(shell which perl)
 
 #Interactome3d
-INT3URL ?= 'http://interactome3d.irbbarcelona.org/user_data/yeast/download/representative'
-FILELISTPAGE ?= 'http://interactome3d.irbbarcelona.org/downloadset.php?queryid=yeast&release=current&path=representative'
+INT3URL ?= 'http://interactome3d.irbbarcelona.org/user_data/$(ORGANISM)/download/representative'
+FILELISTPAGE ?= 'http://interactome3d.irbbarcelona.org/downloadset.php?queryid=$(ORGANISM)&release=current&path=representative'
 
 # Necessary for variables parsing
 NACCESSCUT = $(shell echo $1 | sed -r 's/([^\.]+).*/\1/')

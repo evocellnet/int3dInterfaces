@@ -293,7 +293,8 @@ sub translateAA{
 	my %translator = ('VAL'=>'V', 'ILE'=>'I', 'LEU'=>'L', 'GLU'=>'E', 'GLN'=>'Q',
 	'ASP'=>'D', 'ASN'=>'N', 'HIS'=>'H', 'TRP'=>'W', 'PHE'=>'F', 'TYR'=>'Y',
 	'ARG'=>'R', 'LYS'=>'K', 'SER'=>'S', 'THR'=>'T', 'MET'=>'M', 'ALA'=>'A',
-	'GLY'=>'G', 'PRO'=>'P', 'CYS'=>'C', 'ASX'=>'B', 'GLX'=>'Z', 'XLE'=>'J', 'UNK'=>'X');
+	'GLY'=>'G', 'PRO'=>'P', 'CYS'=>'C', 'ASX'=>'B', 'GLX'=>'Z', 'XLE'=>'J',
+	'SEC'=>'U', 'UNK'=>'X');
 	my $oneLetter=$translator{$threeLetters};
 	if(!defined($oneLetter)){
 		die "Unknown aminoacid ".$threeLetters;
