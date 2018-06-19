@@ -3,7 +3,7 @@
 #################
 
 #Organism
-ORGANISM = yeast
+ORGANISM = human
 
 #Main directories
 TEMPDIR = $(CURDIR)/temp
