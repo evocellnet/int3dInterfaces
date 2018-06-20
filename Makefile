@@ -113,7 +113,7 @@ $(UNIPROTFASTA):
 
 #Download list of files on the 
 $(FILELIST):
-	$(CURL) $(FILELISTPAGE) | $(EGREP) -o 'proteins_[0-9]+\.tgz|interactions_[0-9]+\.tgz' | $(SORT) | $(UNIQ)  > $@
+	$(WGET) -O - $(FILELISTPAGE) | $(EGREP) -o 'proteins_[0-9]+\.tgz|interactions_[0-9]+\.tgz' | $(SORT) | $(UNIQ)  > $@
 
 #Download interactions.dat
 $(INTERACTOME3DINTFILE):
