@@ -6,10 +6,9 @@
 ORGANISM = human
 
 #Main directories
-TEMPDIR = $(CURDIR)/temp
 SRCDIR = $(CURDIR)/src
 DATADIR = $(CURDIR)/data
-ORGANISMS = $(CURDIR)/organisms.txt
+ORGFILE = $(CURDIR)/organisms.tab
 RESULTSDIR = $(CURDIR)/results
 
 #Tools
@@ -23,6 +22,10 @@ UNIQ ?= $(shell which uniq)
 TAR ?= $(shell which tar)
 PERL ?= $(shell which perl)
 
+#Uniprot
+UNIPROTFTP ?= ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/
+UNIPROTFASTA = $(DATADIR)/uniprot_$(ORGANISM).fasta
+
 #Interactome3d
 INT3URL ?= 'http://interactome3d.irbbarcelona.org/user_data/$(ORGANISM)/download/representative'
 FILELISTPAGE ?= 'http://interactome3d.irbbarcelona.org/downloadset.php?queryid=$(ORGANISM)&release=current&path=representative'
@@ -30,6 +33,7 @@ FILELISTPAGE ?= 'http://interactome3d.irbbarcelona.org/downloadset.php?queryid=$
 # Necessary for variables parsing
 NACCESSCUT = $(shell echo $1 | sed -r 's/([^\.]+).*/\1/')
 PARENTPDB = $(shell echo $1 | sed -r 's/(.+)_[AB].pdb/\1/')
+CSVCUT = $(shell sed "1d" $(ORGFILE) | grep -E '^$(1)\s' | cut -f$(2))
 
 #List of tgz to download
 FILELIST ?= $(DATADIR)/filelist.txt
@@ -67,17 +71,16 @@ INTERACTOME3DPROTRSASFILENAMES = $(addprefix $(INTERACTOME3DPROTSRSADIR)/,$(INTE
 .PRECIOUS: $(FILELIST) $(INTERACTOME3DINTFILE) $(INTERACTOME3DINTRSAS)
 .PHONY : int3Ddirectories clean-download int3Drsas
 
-prepare: download-indexes
-	
+prepare: $(UNIPROTFASTA) download-indexes
+
 all: $(INTERFACESFILE) $(INTERACTPROTACC)
 
 download-tars: $(INTERACTOME3DINTSTARFILES)
-	
+
 download-indexes: int3Ddirectories $(FILELIST) $(INTERACTOME3DINTFILE) 
 
-test:
-	@echo $(INTERACTOME3DINTPDBSFILENAMES)
-	
+test: $(UNIPROTFASTA)
+
 int3Ddirectories:
 	mkdir -p $(DATADIR)
 	mkdir -p $(RESULTSDIR)
@@ -101,7 +104,13 @@ clean:
 	-rm -rvf $(DATADIR)/*
 	-rm $(INTERFACESFILE)
 	-rm $(INTERACTPROTACC)
-	
+
+#Download fasta from uniprot
+$(UNIPROTFASTA):
+	$(WGET) -P $(DATADIR) $(UNIPROTFTP)$(call CSVCUT,$(ORGANISM),2)/$(call CSVCUT,$(ORGANISM),3).fasta.gz
+	gunzip $(DATADIR)/$(call CSVCUT,$(ORGANISM),3).fasta.gz
+	mv $(DATADIR)/$(call CSVCUT,$(ORGANISM),3).fasta $@
+
 #Download list of files on the 
 $(FILELIST):
 	$(CURL) $(FILELISTPAGE) | $(EGREP) -o 'proteins_[0-9]+\.tgz|interactions_[0-9]+\.tgz' | $(SORT) | $(UNIQ)  > $@
@@ -123,7 +132,7 @@ $(INTERACTOME3DINTSRSADIR)/%.rsa: $(INTERACTOME3DINTSPDBDIR)/%.pdb
 		mv $(call NACCESSCUT,$*).log $(INTERACTOME3DINTSLOGDIR)/$*.rsa ;\
 		mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DINTSASADIR)/$*.rsa ;\
 	fi
-	
+
 #Individual proteins extracted from interactome3d complexes
 $(INTERACTOME3DPROTSPDBDIR)/%.pdb: 
 	$(PERL) $(SRCDIR)/splitInteraction.pl $(INTERACTOME3DINTSPDBDIR)/$(call PARENTPDB, $*.pdb).pdb $(INTERACTOME3DPROTSPDBDIR)
@@ -136,7 +145,7 @@ $(INTERACTOME3DPROTSRSADIR)/%.rsa: $(INTERACTOME3DPROTSPDBDIR)/%.pdb
 		mv $(call NACCESSCUT,$*).log $(INTERACTOME3DPROTSLOGDIR)/$*.rsa ;\
 		mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DPROTSASADIR)/$*.rsa ;\
 	fi
-	
+
 $(INTERFACESFILE): int3Drsas
 	$(PERL) $(SRCDIR)/interactionsParser.pl \
 	$(INTERACTOME3DINTFILE) \
