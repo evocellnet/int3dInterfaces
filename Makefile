@@ -21,6 +21,7 @@ SORT ?= $(shell which sort)
 UNIQ ?= $(shell which uniq)
 TAR ?= $(shell which tar)
 PERL ?= $(shell which perl)
+RSCRIPT ?= $(shell which Rscript) 
 
 #Uniprot
 UNIPROTFTP ?= ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/reference_proteomes/
@@ -55,7 +56,11 @@ INTERACTOME3DPROTSASADIR ?= $(INTERACTOME3DPROTSDIR)/asas
 
 #Output
 INTERFACESFILE ?= $(RESULTSDIR)/interfaces.tab
+INTERFACESFILE_NOTREMAPPED ?= $(RESULTSDIR)/interfaces_notmapped.tab
 INTERACTPROTACC ?= $(RESULTSDIR)/accessibilities.tab
+
+#pdb mappings
+PDBPOSMAPPINGS ?= $(DATADIR)/pdb_mappings.rds
 
 #Interactome3d
 INTERACTOME3DINTSTARFILES = $(foreach FILE,$(shell grep interactions $(FILELIST) | grep tgz),$(INTERACTOME3DINTSTARDIR)/$(basename $(FILE)).tgz)
@@ -73,7 +78,7 @@ INTERACTOME3DPROTRSASFILENAMES = $(addprefix $(INTERACTOME3DPROTSRSADIR)/,$(INTE
 
 prepare: $(UNIPROTFASTA) download-indexes
 
-all: $(INTERFACESFILE) $(INTERACTPROTACC)
+all: $(INTERFACESFILE_NOTREMAPPED) $(INTERFACESFILE) $(INTERACTPROTACC)
 
 download-tars: $(INTERACTOME3DINTSTARFILES)
 
@@ -146,11 +151,26 @@ $(INTERACTOME3DPROTSRSADIR)/%.rsa: $(INTERACTOME3DPROTSPDBDIR)/%.pdb
 		mv $(call NACCESSCUT,$*).asa $(INTERACTOME3DPROTSASADIR)/$*.rsa ;\
 	fi
 
-$(INTERFACESFILE): int3Drsas
+$(INTERFACESFILE_NOTREMAPPED): int3Drsas
 	$(PERL) $(SRCDIR)/interactionsParser.pl \
 	$(INTERACTOME3DINTFILE) \
 	$(DATADIR) > $@
 
+
+$(PDBPOSMAPPINGS): $(INTERACTOME3DINTFILE)
+	$(RSCRIPT) $(SRCDIR)/getPdbPositions.R \
+	$(INTERACTOME3DINTFILE) \
+	$(INTERACTOME3DINTSPDBDIR) \
+	$(UNIPROTFASTA) \
+	$@
+
+$(INTERFACESFILE): $(PDBPOSMAPPINGS)
+	$(RSCRIPT) $(SRCDIR)/rempaPdbPositions.R \
+	$(INTERFACESFILE_NOTREMAPPED) \
+	$(PDBPOSMAPPINGS) \
+	$@
+
+#this file is not remapped
 $(INTERACTPROTACC): int3Drsas
 	$(PERL) $(SRCDIR)/intProteinsAccParser.pl \
 	$(INTERACTOME3DINTFILE) \
