@@ -9,12 +9,10 @@ pdbdir <- args[2]
 uniprotfastafile <- args[3]
 outfile <- args[4]
 
-#Read interactions file
-interactionsFile <- read_tsv(interactionsFile)
-
 getChainSeqs <- function(filename){
     invisible(capture.output(pdb <- suppressWarnings(read.pdb(file = filename))))
-    pdbname <- tail(unlist(str_split(filename, "/")), n = 1)
+    pdbname <- basename(filename)
+    message("\t* Reading ",pdbname)
     chains <- unique(pdb$atom$chain)
     seq1 <- pdbseq(bio3d::trim(pdb, chain = chains[1]))
     seq2 <- pdbseq(bio3d::trim(pdb, chain = chains[2]))
@@ -24,6 +22,11 @@ getChainSeqs <- function(filename){
     return(out)
 }
 
+message("- Reading files...")
+
+#Read interactions file
+interactionsFile <- read_tsv(interactionsFile)
+
 ##Read uniprot fasta
 up_fa <- readAAStringSet(uniprotfastafile)
 names(up_fa) = sapply( strsplit(names(up_fa), '\\|'), function(i) i[2] )
@@ -31,15 +34,16 @@ names(up_fa) = sapply( strsplit(names(up_fa), '\\|'), function(i) i[2] )
 #Extract all pdb residues
 allpdbresidues <- interactionsFile %>%
     pull(FILENAME) %>%
-    map(~getChainSeqs(file.path(pdbdir, .))) %>%
-    purrr::reduce(rbind) %>%
+    map_df(~getChainSeqs(file.path(pdbdir, .))) %>%
     left_join(bind_rows(interactionsFile %>%
-                        select(acc = PROT1, file = FILENAME, pdbchain = CHAIN) %>%
+                        select(acc = PROT1, file = FILENAME, pdbchain = CHAIN1) %>%
                         mutate(chain = "A"),
                         interactionsFile %>%
-                        select(acc = PROT2, file = FILENAME, pdbchain = CHAIN) %>%
+                        select(acc = PROT2, file = FILENAME, pdbchain = CHAIN2) %>%
                         mutate(chain = "B")),
               by = c("file", "chain"))
+
+message("- Pairwise alignments...")
 
 #sequences to align
 toalign <- allpdbresidues %>%
@@ -55,6 +59,7 @@ toalign <- allpdbresidues %>%
 aln <- pairwiseAlignment(up_fa[toalign$acc], toalign$pdbseq)
 
 #Extracting alignment positions
+message("- Extracting alignment positions...")
 dat <- lapply(1:length(aln), function(i){
   if(i %% 100 == 0) message(i)
   up = strsplit( as.character( pattern(aln)[i] ), '')[[1]]
@@ -84,9 +89,11 @@ pdb_pos_aln_mapping <- toalign %>%
     unnest() %>%
     dplyr::select(-newposmap)
 
+message("- Position mapping...")
 #Mapping 
 dat <- dat %>%
     inner_join(pdb_pos_aln_mapping, by = c("acc", "file", "chain", "pdbaln_pos")) %>%
     select(-pdbaln_pos)
 
+message("- Printing...")
 saveRDS(dat, file = outfile)
