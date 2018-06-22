@@ -1,20 +1,30 @@
 library(tidyverse)
 
 args <- commandArgs(trailingOnly = TRUE)
-intfcfile <- "../results/interfaces_notmapped.tab"
-mappingsfile <- "../data/pdb_mappings.rds"
+## intfcfile <- "../results/interfaces_notmapped.tab"
+## mapingsfile <- "../data/pdb_mappings.rds"
 intfcfile <- args[1]
-mappings <- args[2]
+mapingsfile <- args[2]
 output <- args[3]
 
-mapppings <- readRDS(mappingsfile) %>% distinct()
+mapings <- readRDS(mapingsfile) %>%
+    distinct() %>%
+    mutate(pdbpos = as.numeric(pdbpos))
+
 intfc <- read_tsv(intfcfile)
 
-intfc %>%
-    left_join(mappings, by = c("PROTEIN" = "acc",
-                               "INTERFACE" = "file",
-                               "CHAIN" = "pdbchain",
-                               "POS_PDB" = "pdbpos")) %>%
-    select(-POS) %>%
-    rename(CHAIN_INT3D = chain, POS = uniprot_pos)
+out <- intfc %>%
+    inner_join(mapings, by = c("PROTEIN" = "acc",
+                              "INTERFACE" = "file",
+                              "CHAIN" = "pdbchain",
+                              "POS_PDB" = "pdbpos",
+                              "AA" = "uniprot_res")) %>%
+    select(-POS, -pdb_res) %>%
+    dplyr::rename(CHAIN_INT3D = chain, UNIPROT_POS = uniprot_pos)
+
+write.table(out,
+            file = output,
+            sep = "\t",
+            quote = FALSE,
+            row.names = FALSE)
     
