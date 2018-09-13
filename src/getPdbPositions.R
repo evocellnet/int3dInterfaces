@@ -17,8 +17,18 @@ getChainSeqs <- function(filename){
     seq1 <- pdbseq(bio3d::trim(pdb, chain = chains[1]))
     seq2 <- pdbseq(bio3d::trim(pdb, chain = chains[2]))
     out <- bind_rows(
-        data.frame(pdb_aa = seq1, pdb_pos = as.numeric(names(seq1)), chain = chains[1], file = pdbname, stringsAsFactors = FALSE),
-        data.frame(pdb_aa = seq2, pdb_pos = as.numeric(names(seq2)), chain = chains[2], file = pdbname, stringsAsFactors = FALSE))
+        data.frame(pdb_aa = seq1,
+                   pdb_pos = as.numeric(names(seq1)),
+                   chain = chains[1],
+                   file = pdbname,
+                   chain_length = length(seq1),
+                   stringsAsFactors = FALSE),
+        data.frame(pdb_aa = seq2,
+                   pdb_pos = as.numeric(names(seq2)),
+                   chain = chains[2],
+                   file = pdbname,
+                   chain_length = length(seq1),
+                   stringsAsFactors = FALSE))
     return(out)
 }
 
@@ -47,7 +57,7 @@ message("- Pairwise alignments...")
 
 #sequences to align
 toalign <- allpdbresidues %>%
-    group_by(acc, file, chain, pdbchain) %>%
+    group_by(acc, file, chain, pdbchain, chain_length) %>%
     arrange(as.numeric(pdb_pos)) %>%
     summarise(pdbseq = paste(pdb_aa, collapse = ""),
               pdbpos = paste(pdb_pos, collapse = ";")) %>%

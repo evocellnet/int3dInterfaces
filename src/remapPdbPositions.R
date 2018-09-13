@@ -20,7 +20,7 @@ out <- intfc %>%
                               "POS_PDB" = "pdbpos",
                               "AA" = "uniprot_res")) %>%
     select(-POS, -pdb_res) %>%
-    dplyr::rename(CHAIN_INT3D = chain, UNIPROT_POS = uniprot_pos)
+    dplyr::rename(CHAIN_PDB = chain, POS_UNIPROT = uniprot_pos)
 
 write.table(out,
             file = output,
