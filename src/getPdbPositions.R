@@ -27,7 +27,7 @@ getChainSeqs <- function(filename){
                    pdb_pos = as.numeric(names(seq2)),
                    chain = chains[2],
                    file = pdbname,
-                   chain_length = length(seq1),
+                   chain_length = length(seq2),
                    stringsAsFactors = FALSE))
     return(out)
 }
