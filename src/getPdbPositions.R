@@ -21,13 +21,15 @@ getChainSeqs <- function(filename){
                    pdb_pos = as.numeric(names(seq1)),
                    chain = chains[1],
                    file = pdbname,
-                   chain_length = length(seq1),
+                   PROTEIN_CHAIN_LENGTH = length(seq1),
+                   PARTNER_CHAIN_LENGTH = length(seq2),
                    stringsAsFactors = FALSE),
         data.frame(pdb_aa = seq2,
                    pdb_pos = as.numeric(names(seq2)),
                    chain = chains[2],
                    file = pdbname,
-                   chain_length = length(seq2),
+                   PROTEIN_CHAIN_LENGTH = length(seq2),
+                   PARTNER_CHAIN_LENGTH = length(seq1),
                    stringsAsFactors = FALSE))
     return(out)
 }
@@ -57,7 +59,7 @@ message("- Pairwise alignments...")
 
 #sequences to align
 toalign <- allpdbresidues %>%
-    group_by(acc, file, chain, pdbchain, chain_length) %>%
+    group_by(acc, file, chain, pdbchain, PROTEIN_CHAIN_LENGTH, PARTNER_CHAIN_LENGTH) %>%
     arrange(as.numeric(pdb_pos)) %>%
     summarise(pdbseq = paste(pdb_aa, collapse = ""),
               pdbpos = paste(pdb_pos, collapse = ";")) %>%
